@@ -1,0 +1,21 @@
+/* #7EC2C2 #9DDCDC #FFF4E1 #E67A7A */
+
+body {
+    background-color: #a0d8ef;
+}
+
+.wrapper {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+.title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 100px;
+    font-weight: bold;
+    color: #fff4e14d;
+}
