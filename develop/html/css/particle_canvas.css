@@ -12,10 +12,15 @@ body {
 
 .title {
     position: absolute;
-    top: 50%;
+    top: 10%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 100px;
-    font-weight: bold;
-    color: #fff4e14d;
-}
+
+    padding: 1rem 3rem;
+    color: #fff;
+    border-radius: 100vh;
+    background-image: -webkit-gradient(linear, left top, right top, from(#209cff), to(#68e0cf));
+    background-image: -webkit-linear-gradient(left, #209cff 0%, #68e0cf 100%);
+    background-image: linear-gradient(to right, #209cff 0%, #68e0cf 100%);
+  }
+
