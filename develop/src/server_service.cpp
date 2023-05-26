@@ -1,37 +1,6 @@
-#include <sys/socket.h>
-#include <netinet/in.h>	
-#include <arpa/inet.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#define INVALID (-1)
-#include <string>
-
-#define SERVER_ADDR "127.0.0.1"
-#define SERVER_PORT 8080
-#define SIZE (6*1024)
+#include "server_service.h"
 
 int httpServer(int);
-
-struct Request {
-    std::string target;
-    std::string method;
-};
-
-struct Response {
-    std::string message;
-    std::string header;
-    std::string header_field;
-    std::string body;
-};
-
-class Server {
-public:
-    Request req;
-    Response res;
-};
-
-Server server;
 
 // ファイルサイズを取得する
 inline unsigned int getFileSize(const char *path) {
@@ -218,9 +187,26 @@ int httpServer(int sock) {
     return 0;
 }
 
-int main(void) {
+int main(int argc, char *argv[])
+{
     int w_addr, c_sock;
     struct sockaddr_in a_addr;
+   std::string server_addr;
+    int server_port;
+
+    server_addr = "127.0.0.1";
+    server_port = 8080;
+    if (argc == 2) {
+        printf("argument size %d\n", argc);
+        server_addr = argv[1];
+    } else if (argc == 3) {
+        printf("argument size %d\n", argc);
+        server_addr = argv[1];
+        server_port = atoi(argv[2]);
+    }
+    printf("IP Address %s\n", server_addr.c_str());
+    printf("Port %d\n", server_port);
+
 
     /* ソケットを作成 */
     w_addr = socket(AF_INET, SOCK_STREAM, 0);
@@ -234,8 +220,9 @@ int main(void) {
 
     /* サーバーのIPアドレスとポートの情報を設定 */
     a_addr.sin_family = AF_INET;
-    a_addr.sin_port = htons((unsigned short)SERVER_PORT);
-    a_addr.sin_addr.s_addr = inet_addr(SERVER_ADDR);
+    a_addr.sin_port = htons(server_port);
+    a_addr.sin_addr.s_addr = inet_addr(server_addr.c_str());
+
 
     /* ソケットに情報を設定 */
     if (bind(w_addr, (const struct sockaddr *)&a_addr, sizeof(a_addr)) == -1) {
@@ -251,6 +238,7 @@ int main(void) {
         return -1;
     }
 
+    Server server;
     while (1) {
         /* 接続要求の受け付け（接続要求くるまで待ち） */
         printf("Waiting connect...\n");
@@ -263,7 +251,9 @@ int main(void) {
         printf("Connected!!\n");
 
         /* 接続済のソケットでデータのやり取り */
-        httpServer(c_sock);
+        //httpServer(c_sock);
+        server.httpServer(c_sock);
+
 
         /* ソケット通信をクローズ */
         close(c_sock);
