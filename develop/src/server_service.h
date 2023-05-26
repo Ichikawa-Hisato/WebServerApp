@@ -11,7 +11,7 @@
 #include <string>
 #include <map>
 #include <regex>
-
+#include <unordered_map>
 
 #define INVALID (-1)
 #define SIZE (6*1024)
@@ -33,19 +33,19 @@ public:
     int sock;
 
     // リクエストメッセージを受信する
-    inline int recvRequestMessage(char *request_message, unsigned int buf_size) {
+    inline int recvRequestMessage(char* request_message, unsigned int buf_size) {
         return recv(sock, request_message, buf_size, 0);
     }
 
-    inline int parseRequestMessage(char *method, char *target, char *request_message) {
-        const char *delimiters = " \t\r\n"; // 区切り文字
-        char *line;
+    inline int parseRequestMessage(char* method, char* target, char* request_message) {
+        const char* delimiters = " \t\r\n"; // 区切り文字
+        char* line;
 
         /* リクエストメッセージの１行目のみ取得 */
         line = strtok(request_message, "\n");
 
         /* " "までの文字列を取得しmethodにコピー */
-        char *token = strtok(line, delimiters);
+        char* token = strtok(line, delimiters);
         if (token == nullptr) {
             std::cerr << "get method error" << std::endl;
             return -1;
@@ -64,7 +64,7 @@ public:
     }
 
     // リクエストに対する処理を行う（今回はGETのみ）
-    inline int readFile(char *body, char *file_path) {
+    inline int readFile(char* body, char* file_path) {
         std::ifstream ifs(file_path, std::ios::binary); // バイナリモードでファイルを開く
         std::stringstream file_data;
 
@@ -104,20 +104,19 @@ public:
         return headerString;
     }
 
-    inline std::string status_message(int status)
-    {
+    inline std::string status_message(int status) {
         switch (status) {
-        case 200: return "OK";
-        case 400: return "Bad Request";
-        case 404: return "Not Found";
-        case 415: return "Unsupported Media Type";
-        default:
+            case 200: return "OK";
+            case 400: return "Bad Request";
+            case 404: return "Not Found";
+            case 415: return "Unsupported Media Type";
+            default:
             case 500: return "Internal Server Error";
         }
     }
 
     // レスポンスを作成する
-    inline int createResponse(char *response_message, int status, char *body, char *path) {
+    inline int createResponse(char* response_message, int status, char* body, char* path) {
         Response res;
         std::string header;
 
@@ -137,8 +136,7 @@ public:
         return 0;
     }
 
-    inline const char* find_content_type(const std::string& path)
-    {
+    inline const char* find_content_type(const std::string& path) {
         static const std::unordered_map<std::string, std::string> mimeTypes = {
             { "txt", "text/plain" },
             { "html", "text/html" },
@@ -165,8 +163,7 @@ public:
         return nullptr;
     }
 
-    inline std::string file_extension(const std::string& path)
-    {
+    inline std::string file_extension(const std::string& path) {
         std::smatch m;
         auto pat = std::regex("\\.([a-zA-Z0-9]+)$");
         if (std::regex_search(path, m, pat)) {
@@ -176,10 +173,10 @@ public:
     }
 
     // レスポンスメッセージを送信する
-    inline int sendResponse(char *response_message, unsigned int message_size) {
+    inline int sendResponse(char* response_message, unsigned int message_size) {
         return send(sock, response_message, message_size, 0);
     }
-    inline int sendResponse(char *response_message) {
+    inline int sendResponse(char* response_message) {
         return sendResponse(response_message, strlen(response_message));
     }
 
