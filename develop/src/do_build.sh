@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APPS_NAME="service"
+APPS_NAME="serverApp"
 
 if [ -d build ]; then
     echo "remove build folder"

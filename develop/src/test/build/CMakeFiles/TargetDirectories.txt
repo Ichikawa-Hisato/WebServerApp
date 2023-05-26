@@ -1,3 +1,0 @@
-/home/user/project/WebServerApp/develop/src/test/build/CMakeFiles/rebuild_cache.dir
-/home/user/project/WebServerApp/develop/src/test/build/CMakeFiles/edit_cache.dir
-/home/user/project/WebServerApp/develop/src/test/build/CMakeFiles/sample.dir

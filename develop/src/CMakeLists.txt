@@ -8,7 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project(server CXX)
 
 # compile executable file
-add_executable(service server_service.cpp server_service.h ${COMMUNICATE} ${UTIL})
+#add_executable(service server_service.cpp server_service.h ${COMMUNICATE} ${UTIL})
+add_executable(serverApp server_service.cpp)
 
 # set include directory
-target_include_directories(service PRIVATE ./communicate ./util)
+#target_include_directories(service PRIVATE ./communicate ./util)
