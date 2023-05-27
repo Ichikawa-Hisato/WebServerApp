@@ -1,3 +1,5 @@
+#pragma once
+
 #include <sys/socket.h>
 #include <netinet/in.h>	
 #include <arpa/inet.h>
@@ -41,10 +43,10 @@ public:
         const char* delimiters = " \t\r\n"; // 区切り文字
         char* line;
 
-        /* リクエストメッセージの１行目のみ取得 */
+        // リクエストメッセージの１行目のみ取得
         line = strtok(request_message, "\n");
 
-        /* " "までの文字列を取得しmethodにコピー */
+        // " "までの文字列を取得しmethodにコピー
         char* token = strtok(line, delimiters);
         if (token == nullptr) {
             std::cerr << "get method error" << std::endl;
@@ -52,7 +54,7 @@ public:
         }
         std::strcpy(method, token);
 
-        /* 次の" "までの文字列を取得しtargetにコピー */
+        // 次の" "までの文字列を取得しtargetにコピー
         token = strtok(nullptr, delimiters);
         if (token == nullptr) {
             std::cerr << "get target error" << std::endl;
@@ -180,6 +182,7 @@ public:
         return sendResponse(response_message, strlen(response_message));
     }
 
+public:
     // HTTPサーバーの処理を行う関数
     int httpServer(int _sock) {
         sock = _sock;
@@ -194,7 +197,7 @@ public:
         int status;
 
         while (1) {
-            /* リクエストメッセージを受信 */
+            // リクエストメッセージを受信
             request_size = recvRequestMessage(request_message, SIZE);
             if (request_size == INVALID) {
                 printf("recvRequestMessage error\n");
@@ -202,25 +205,25 @@ public:
             }
 
             if (request_size == 0) {
-                /* 受信サイズが0の場合は相手が接続閉じていると判断 */
+                // 受信サイズが0の場合は相手が接続閉じていると判断
                 printf("connection ended\n");
                 break;
             }
 
-            /* 受信した文字列を解析してメソッドやリクエストターゲットを取得 */
+            // 受信した文字列を解析してメソッドやリクエストターゲットを取得
             if (parseRequestMessage(method, target, request_message) == -1) {
                 printf("parseRequestMessage error\n");
                 break;
             }
 
-            /* メソッドがGET以外はステータスコードを404にする */
+            // メソッドがGET以外はステータスコードを404にする
             if (strcmp(method, "GET") == 0) {
                 if (strcmp(target, "/") == 0) {
-                    /* /が指定された時は/index.htmlに置き換える */
+                    // /が指定された時は/index.htmlに置き換える
                     strcpy(target, "/index.html");
                 }
 
-                /* GETの応答をするために必要な処理を行う */
+                // GETの応答をするために必要な処理を行う
                 printf("get target file : %s\n", target);
                 status = readFile(body, &target[1]);
             } else {
@@ -233,7 +236,7 @@ public:
                 break;
             }
 
-            /* レスポンスメッセージを送信する */
+            // レスポンスメッセージを送信する
             sendResponse(response_message);
         }
         return 0;

@@ -1,14 +1,16 @@
-#include "server_service.h"
+#include "socket.h"
+#include "server.h"
 
 int main(int argc, char *argv[])
 {
     int w_addr, c_sock;
     struct sockaddr_in a_addr;
-   std::string server_addr;
+    std::string server_addr;
     int server_port;
 
     server_addr = "127.0.0.1";
     server_port = 8080;
+#if 0
     if (argc == 2) {
         printf("argument size %d\n", argc);
         server_addr = argv[1];
@@ -17,16 +19,28 @@ int main(int argc, char *argv[])
         server_addr = argv[1];
         server_port = atoi(argv[2]);
     }
+#else
+    if (argc == 2) {
+        printf("argc %d\n", argc);
+        return 0;
+    }
+    int i = 1;
+    while (i < argc) {
+        std::string check = argv[i];
+        i++;
+        if (check == "-a") {
+            server_addr = argv[i];
+        } else if (check == "-p") {
+            server_port = atoi(argv[i]);
+        } else {
+            return 0;
+        }
+        i++;
+    }
+#endif
+
     printf("IP Address %s\n", server_addr.c_str());
     printf("Port %d\n", server_port);
-
-
-    /* ソケットを作成 */
-    w_addr = socket(AF_INET, SOCK_STREAM, 0);
-    if (w_addr == -1) {
-        printf("socket error\n");
-        return -1;
-    }
 
     /* 構造体を全て0にセット */
     memset(&a_addr, 0, sizeof(struct sockaddr_in));
@@ -36,6 +50,12 @@ int main(int argc, char *argv[])
     a_addr.sin_port = htons(server_port);
     a_addr.sin_addr.s_addr = inet_addr(server_addr.c_str());
 
+    /* ソケットを作成 */
+    w_addr = socket(AF_INET, SOCK_STREAM, 0);
+    if (w_addr == -1) {
+        printf("socket error\n");
+        return -1;
+    }
 
     /* ソケットに情報を設定 */
     if (bind(w_addr, (const struct sockaddr *)&a_addr, sizeof(a_addr)) == -1) {
@@ -65,7 +85,6 @@ int main(int argc, char *argv[])
 
         /* 接続済のソケットでデータのやり取り */
         server.httpServer(c_sock);
-
 
         /* ソケット通信をクローズ */
         close(c_sock);
